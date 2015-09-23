@@ -19,7 +19,8 @@ describe LibumatorServer do
                                ) 
   }
 
-  let(:server) {  LibumatorServer.new(reader: lib_dir_reader) }
+  let(:job_runner) { double("job_runner", start_job: nil) }
+  let(:server) {  LibumatorServer.new(reader: lib_dir_reader, job_runner: job_runner) }
     
   def lib_hash_factory(vendor: 'xilinx', vendor_version: 'vivado.2015.1',
                family: 'series7', sim_version: 'incisive.142_s007',
@@ -76,8 +77,7 @@ describe LibumatorServer do
   end
 
   it "should kick off the lib build process if all is well on build command" do
-    pending
     server.build_lib(new_lib_hash)
-    expect(true).to eq(false)
+    expect(server.job_runner).to have_received(:start_job)
   end
 end

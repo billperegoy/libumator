@@ -1,8 +1,10 @@
 class LibumatorServer
-  attr_reader :existing_libs
+  attr_reader :existing_libs, :job_runner
 
-  def initialize(reader:)
+  def initialize(reader:, job_runner:)
     @reader = reader
+    @job_runner = job_runner
+
     @existing_libs = reader.read_dirs
   end
 
@@ -29,6 +31,9 @@ class LibumatorServer
       @existing_libs[key] =  { status: :build_in_progress,
                                path: "/hwnet/some/broken/shit/32"
                              }
+      @job_runner.start_job(vendor: vendor, vendor_version: vendor_version,
+                            family: family, sim_verwsion: sim_version,
+                            word_size: word_size)
     end
   end
 
