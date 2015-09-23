@@ -8,32 +8,28 @@ class LibumatorServer
     @existing_libs = reader.read_dirs
   end
 
-  def exist_lib?(vendor:, vendor_version:, family:, sim_version:, word_size:)
-    key = "#{vendor}:#{vendor_version}:#{family}:#{sim_version}:#{word_size}"
+  def exist_lib?(lib)
+    key = lib.hash_key
     @existing_libs.has_key?(key)
   end
 
-  def build_status(vendor:, vendor_version:, family:, sim_version:, word_size:)
-    key = "#{vendor}:#{vendor_version}:#{family}:#{sim_version}:#{word_size}"
+  def build_status(lib)
+    key = lib.hash_key
     @existing_libs[key] and @existing_libs[key][:status]
   end
 
-  def build_path(vendor:, vendor_version:, family:, sim_version:, word_size:)
-    key = "#{vendor}:#{vendor_version}:#{family}:#{sim_version}:#{word_size}"
+  def build_path(lib)
+    key = lib.hash_key
     @existing_libs[key] and @existing_libs[key][:path]
   end
 
-  def build_lib(vendor:, vendor_version:, family:, sim_version:, word_size:)
-    key = "#{vendor}:#{vendor_version}:#{family}:#{sim_version}:#{word_size}"
-    unless exist_lib?(vendor: vendor, vendor_version: vendor_version,
-                      family: family, sim_version: sim_version,
-                      word_size: word_size)
-      @existing_libs[key] =  { status: :build_in_progress,
-                               path: "/hwnet/some/broken/shit/32"
-                             }
-      @job_runner.start_job(vendor: vendor, vendor_version: vendor_version,
-                            family: family, sim_verwsion: sim_version,
-                            word_size: word_size)
+  def build_lib(lib)
+    key = lib.hash_key
+    unless exist_lib?(lib)
+      @existing_libs[lib.hash_key] =  { status: :build_in_progress,
+                                        path: "/hwnet/some/broken/shit/32"
+                                      }
+      @job_runner.start_job(lib)
     end
   end
 
