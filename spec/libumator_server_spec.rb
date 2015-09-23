@@ -2,59 +2,49 @@ require_relative "./spec_helper"
 
 describe LibumatorServer do
   let(:good_lib1) { LibVersion.new(vendor: 'xilinx', vendor_version: 'vivado.2015.1',
-                              family: 'series7', sim_version: 'incisive.142_s007',
-                              word_size: 32)
+                                   family: 'series7', sim_version: 'incisive.142_s007',
+                                   word_size: 32)
   }
 
   let(:good_lib2) { LibVersion.new(vendor: 'xilinx', vendor_version: 'vivado.2015.1',
-                              family: 'series7', sim_version: 'incisive.142_s007',
-                              word_size: 64)
+                                   family: 'series7', sim_version: 'incisive.142_s007',
+                                   word_size: 64)
   }
   let(:good_lib3) { LibVersion.new(vendor: 'xilinx', vendor_version: 'vivado.2015.2',
-                              family: 'series7', sim_version: 'incisive.142_s007',
-                              word_size: 32)
+                                   family: 'series7', sim_version: 'incisive.142_s007',
+                                   word_size: 32)
   }
 
   let(:bad_lib) { LibVersion.new(vendor: 'xilinx', vendor_version: 'vivado.2015.1',
-                              family: 'bogus', sim_version: 'incisive.142_s007',
-                              word_size: 32)
+                                 family: 'bogus', sim_version: 'incisive.142_s007',
+                                 word_size: 32)
   }
 
   let(:new_lib) { LibVersion.new(vendor: 'xilinx', vendor_version: 'vivado.2015.1',
-                              family: 'kintex7', sim_version: 'incisive.142_s007',
-                              word_size: 32)
+                                 family: 'kintex7', sim_version: 'incisive.142_s007',
+                                 word_size: 32)
   }
 
   let(:lib_dir_reader) { double("lib_reader", 
                                 :read_dirs => {
-                                  good_lib1.hash_key => {
+                                  good_lib1.hash_key => LibInfo.new(
                                     status: :build_success,
                                     path: '/hwnet/some/shit/32'
-                                  },
-                                  good_lib2.hash_key => {
+                                  ),
+                                  good_lib2.hash_key => LibInfo.new(
                                     status: :build_success,
                                     path: '/hwnet/some/shit/64'
-                                  },
-                                  good_lib3.hash_key => {
+                                  ),
+                                  good_lib3.hash_key => LibInfo.new(
                                     status: :build_success,
                                     path: '/hwnet/some/other/shit/32'
-                                  }
+                                  )
                                 }
                                ) 
   }
 
   let(:job_runner) { double("job_runner", start_job: nil) }
   let(:server) {  LibumatorServer.new(reader: lib_dir_reader, job_runner: job_runner) }
-
-  def lib_hash_factory(vendor: 'xilinx', vendor_version: 'vivado.2015.1',
-               family: 'series7', sim_version: 'incisive.142_s007',
-               word_size: 32)
-    {
-      vendor: vendor, vendor_version: vendor_version,
-      family: family, sim_version: sim_version, word_size: word_size
-    }
-  end
-
 
   it "Should initialize by reading status of all existing libs" do
     expect(server.existing_libs.length).to eq(3)
