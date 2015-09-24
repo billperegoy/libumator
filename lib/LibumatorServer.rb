@@ -9,22 +9,18 @@ class LibumatorServer
   end
 
   def exist_lib?(lib)
-    key = lib.hash_key
-    @existing_libs.has_key?(key)
+    @existing_libs.has_key?(lib.hash_key)
   end
 
   def build_status(lib)
-    key = lib.hash_key
-    @existing_libs[key] and @existing_libs[key].status
+    @existing_libs[lib.hash_key] and @existing_libs[lib.hash_key].status
   end
 
   def build_path(lib)
-    key = lib.hash_key
-    @existing_libs[key] and @existing_libs[key].path
+    @existing_libs[lib.hash_key] and @existing_libs[lib.hash_key].path
   end
 
   def build_lib(lib)
-    key = lib.hash_key
     unless exist_lib?(lib)
       info = LibInfo.new(status: :build_in_progress,
                          path: "/hwnet/some/broken/shit/32")
